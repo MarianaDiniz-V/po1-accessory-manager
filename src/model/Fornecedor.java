@@ -18,7 +18,7 @@ public class Fornecedor {
         }
 
         try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/loja_roupa", "root", "");
-             PreparedStatement insert = conn.prepareStatement("INSERT INTO fornecedores (str_nome, str_contato, str_cnpj) VALUES (?, ?, ?)")) {
+             PreparedStatement insert = conn.prepareStatement("INSERT INTO fornecedores (str_nome, str_telefone, str_cnpj) VALUES (?, ?, ?)")) {
             insert.setString(1, nome);
             insert.setString(2, contato);
             insert.setString(3, cnpj);

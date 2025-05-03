@@ -17,7 +17,7 @@ public class Cliente {
         }
 
         try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/loja_roupa", "root", ""); //TODO(testar conexão com o banco)
-             PreparedStatement insert = conn.prepareStatement("INSERT INTO clientes (str_nome, str_contato, str_cpf_cnpj) VALUES (?, ?, ?)")) {
+             PreparedStatement insert = conn.prepareStatement("INSERT INTO clientes (str_nome, str_telefone, str_cpf_cnpj) VALUES (?, ?, ?)")) {
             insert.setString(1, nome);
             insert.setString(2, contato);
             insert.setString(3, cpfCnpj);
