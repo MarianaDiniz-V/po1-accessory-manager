@@ -11,11 +11,11 @@ public class Produto {
     private String descricao;
     private String cor;
     private double preco;
-    private int tamanho;
+    private String tamanho;
     private int estoque;
     private int idFornecedor;
 
-    
+
     public int getId() {
         return id;
     }
@@ -56,11 +56,11 @@ public class Produto {
         this.preco = preco;
     }
 
-    public int getTamanho() {
+    public String getTamanho() {
         return tamanho;
     }
 
-    public void setTamanho(int tamanho) {
+    public void setTamanho(String tamanho) {
         this.tamanho = tamanho;
     }
 
@@ -76,17 +76,17 @@ public class Produto {
         return idFornecedor;
     }
 
-    public void setIdFornecedor(int estoque) {
-        this.estoque = estoque;
+    public void setIdFornecedor(int idFornecedor) {
+        this.idFornecedor = idFornecedor;
     }
 
 
     public static int cadastrarProduto(String nome, String descricao, String tamanho, String cor, Double preco,  int estoque, int idFornecedor) {
         String sql = "INSERT INTO produtos (str_nome, str_descricao, str_tamanho, str_cor, dec_preco, int_qtd_estoque, int_id_fornecedor) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    
-        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/loja_roupa", "root", "");
+
+        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/loja_roupas", "root", "");
              PreparedStatement insert = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-    
+
             insert.setString(1, nome);
             insert.setString(2, descricao);
             insert.setString(3, tamanho);
@@ -94,26 +94,26 @@ public class Produto {
             insert.setDouble(5, preco);
             insert.setInt(6, estoque);
             insert.setInt(7, idFornecedor);
-    
+
             insert.executeUpdate();
-    
+
             try (ResultSet rs = insert.getGeneratedKeys()) {
                 if (rs.next()) {
                     return rs.getInt(1);
                 }
             }
-    
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    
+
         return -1;
-    }    
+    }
 
 
     public static boolean atualizarEstoque(int idProduto, int quantidade) {
-        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/loja_roupa", "root", "");
-             PreparedStatement update = conn.prepareStatement("UPDATE produtos SET int_qtd_estoque = int_qtd_estoque + ? WHERE int_id_produto = ?")) {
+        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/loja_roupas", "root", "");
+             PreparedStatement update = conn.prepareStatement("UPDATE produtos SET int_qtd_estoque = ? WHERE int_id_produto = ?")) {
 
             update.setInt(1, quantidade);
             update.setInt(2, idProduto);
@@ -126,7 +126,7 @@ public class Produto {
     }
 
     public static Produto consultarEstoque(int idProduto) {
-        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/loja_roupa", "root", "");
+        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/loja_roupas", "root", "");
              PreparedStatement select = conn.prepareStatement("SELECT * FROM produtos WHERE int_id_produto = ?")) {
 
             select.setInt(1, idProduto);
@@ -139,7 +139,7 @@ public class Produto {
                 produto.setDescricao(response.getString("str_descricao"));
                 produto.setCor(response.getString("str_cor"));
                 produto.setPreco(response.getDouble("dec_preco"));
-                produto.setTamanho(response.getInt("str_tamanho"));
+                produto.setTamanho(response.getString("str_tamanho"));
                 produto.setEstoque(response.getInt("int_qtd_estoque"));
                 produto.setIdFornecedor(response.getInt("int_id_fornecedor"));
                 return produto;
@@ -154,11 +154,11 @@ public class Produto {
     public static List<Produto> consultarEstoqueGeral() {
         List<Produto> produtos = new ArrayList<>();
 
-        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/loja_roupa", "root", "");
+        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/loja_roupas", "root", "");
              PreparedStatement select = conn.prepareStatement("SELECT * FROM produtos")) {
 
             ResultSet response = select.executeQuery();
-            
+
             while (response.next()) {
                 Produto produto = new Produto();
                 produto.setId(response.getInt("int_id_produto"));
@@ -166,17 +166,17 @@ public class Produto {
                 produto.setDescricao(response.getString("str_descricao"));
                 produto.setCor(response.getString("str_cor"));
                 produto.setPreco(response.getDouble("dec_preco"));
-                produto.setTamanho(response.getInt("str_tamanho"));
+                produto.setTamanho(response.getString("str_tamanho"));
                 produto.setEstoque(response.getInt("int_qtd_estoque"));
                 produto.setIdFornecedor(response.getInt("int_id_fornecedor"));
 
-                produtos.add(produto); 
+                produtos.add(produto);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return produtos;  
+        return produtos;
     }
 
     public static List<Produto> listarProdutosPorVenda(int idVenda) {
@@ -184,10 +184,10 @@ public class Produto {
 
         try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/seu_banco", "usuario", "senha")) {
             String sql = "SELECT p.int_id_produto, p.nome_produto, p.preco " +
-                         "FROM Produtos v " +
-                         "JOIN vendas_produtos vp ON v.int_id_venda = vp.int_id_venda " +
-                         "JOIN produtos p ON vp.int_id_produto = p.int_id_produto " +
-                         "WHERE v.int_id_venda = ?";
+                    "FROM Produtos v " +
+                    "JOIN vendas_produtos vp ON v.int_id_venda = vp.int_id_venda " +
+                    "JOIN produtos p ON vp.int_id_produto = p.int_id_produto " +
+                    "WHERE v.int_id_venda = ?";
             try (PreparedStatement stmt = conn.prepareStatement(sql)) {
                 stmt.setInt(1, idVenda);
                 try (ResultSet rs = stmt.executeQuery()) {
