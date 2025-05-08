@@ -12,48 +12,6 @@ public class ItemVenda {
     private double precoUnitario;
     private double total;
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getIdVenda() {
-        return idVenda;
-    }
-
-    public void setIdVenda(int idVenda) {
-        this.idVenda = idVenda;
-    }
-
-    public int getIdProduto() {
-        return idProduto;
-    }
-
-    public void setIdProduto(int idProduto) {
-        this.idProduto = idProduto;
-    }
-
-    public int getQuantidade() {
-        return quantidade;
-    }
-
-    public void setQuantidade(int quantidade) {
-        this.quantidade = quantidade;
-        calcularTotal();
-    }
-
-    public double getPrecoUnitario() {
-        return precoUnitario;
-    }
-
-    public void setPrecoUnitario(double precoUnitario) {
-        this.precoUnitario = precoUnitario;
-        calcularTotal();
-    }
-
     public double getTotal() {
         return total;
     }
@@ -64,33 +22,32 @@ public class ItemVenda {
 
     public static int cadastrarItemVenda(int idVenda, int idProduto, int quantidade, double precoUnitario) {
         double total = precoUnitario * quantidade;
-    
+
         String sql = "INSERT INTO itens_venda (int_id_venda, int_id_produto, int_quantidade, dec_preco_unitario, dec_total) VALUES (?, ?, ?, ?, ?)";
-    
+
         try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/loja_roupa", "root", "");
              PreparedStatement insert = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-    
+
             insert.setInt(1, idVenda);
             insert.setInt(2, idProduto);
             insert.setInt(3, quantidade);
             insert.setDouble(4, precoUnitario);
             insert.setDouble(5, total);
-    
+
             insert.executeUpdate();
-    
+
             try (ResultSet rs = insert.getGeneratedKeys()) {
                 if (rs.next()) {
-                    return rs.getInt(1); 
+                    return rs.getInt(1);
                 }
             }
-    
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    
-        return -1; 
+
+        return -1;
     }
-    
 
     public static ItemVenda consultarItemVenda(int id) {
         String sql = "SELECT int_id_item, int_id_venda, int_id_produto, int_quantidade, dec_preco_unitario, dec_total FROM itens_venda WHERE int_id_item = ?";
@@ -147,4 +104,46 @@ public class ItemVenda {
 
         return itens;
     }
+
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public int getIdVenda() {
+        return idVenda;
+    }
+
+    public void setIdVenda(int idVenda) {this.idVenda = idVenda;}
+
+    public int getIdProduto() {
+        return idProduto;
+    }
+
+    public void setIdProduto(int idProduto) {
+        this.idProduto = idProduto;
+    }
+
+    public int getQuantidade() {
+        return quantidade;
+    }
+
+    public void setQuantidade(int quantidade) {
+        this.quantidade = quantidade;
+        calcularTotal();
+    }
+
+    public double getPrecoUnitario() {
+        return precoUnitario;
+    }
+
+    public void setPrecoUnitario(double precoUnitario) {
+        this.precoUnitario = precoUnitario;
+        calcularTotal();
+    }
+
 }

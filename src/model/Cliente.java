@@ -12,73 +12,22 @@ public class Cliente {
     private String cpfCnpj;
     private Date criacao;
 
-    // Getters e Setters
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-
-    public String getEmail() {
-        return nome;
-    }
-
-    public void setEmail(String nome) {
-        this.nome = nome;
-    }
-
-
-    public String getTelefone() {
-        return telefone;
-    }
-
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
-    }
-
-    public String getCpfCnpj() {
-        return cpfCnpj;
-    }
-
-    public void setCpfCnpj(String cpfCnpj) {
-        this.cpfCnpj = cpfCnpj;
-    }
-
-    public Date getCriacao() {
-        return criacao;
-    }
-
-    public void setCriacao(Date criacao) {
-        this.criacao = criacao;
-    }
-    
     public static int cadastrarCliente(String nome, String email, String telefone, String cpfCnpj) throws Exception {
         if (consultarClientePorCpfCnpj(cpfCnpj) != null) {
             throw new Exception("Já existe um cliente cadastrado com o documento: " + cpfCnpj);
         }
-    
+
         String sql = "INSERT INTO clientes (str_nome, str_email, str_telefone, str_cpf_cnpj) VALUES (?, ?, ?, ?)";
-    
+
         try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/loja_roupa", "root", "");
              PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-    
+
             stmt.setString(1, nome);
             stmt.setString(2, email);
             stmt.setString(3, telefone);
             stmt.setString(4, cpfCnpj);
             stmt.executeUpdate();
-    
+
             try (ResultSet rs = stmt.getGeneratedKeys()) {
                 if (rs.next()) {
                     return rs.getInt(1);
@@ -87,11 +36,10 @@ public class Cliente {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-    
+
         return -1;
     }
-    
-    
+
     public static Cliente consultarClientePorCpfCnpj(String cpfCnpj) {
         String sql = "SELECT * FROM clientes WHERE str_cpf_cnpj = ?";
         try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/loja_roupa", "root", "");
@@ -113,7 +61,7 @@ public class Cliente {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return null; 
+        return null;
     }
 
     public static List<Cliente> listarClientes() {
@@ -158,4 +106,52 @@ public class Cliente {
         }
         return false;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getNome() { return nome; }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getEmail() {
+        return nome;
+    }
+
+    public void setEmail(String nome) {
+        this.nome = nome;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
+
+    public String getCpfCnpj() {
+        return cpfCnpj;
+    }
+
+    public void setCpfCnpj(String cpfCnpj) {
+        this.cpfCnpj = cpfCnpj;
+    }
+
+    public Date getCriacao() {
+        return criacao;
+    }
+
+    public void setCriacao(Date criacao) {
+        this.criacao = criacao;
+    }
+    
+
 }
